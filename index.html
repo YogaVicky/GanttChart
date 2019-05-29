@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+	<style type="text/css">
+
+	</style>
+	<script src="./ganttcodebase/dhtmlxgantt_tooltip.js"></script> 
+   <script src="./ganttcodebase/dhtmlxgantt.js"></script>
+   <link href="./ganttcodebase/dhtmlxgantt.css" rel="stylesheet">
+</head>
+<body>
+    <div id="gantt_here" style='width:2000px; height:800px;'></div>
+    <script type="text/javascript">
+    </script>
+    <script type="text/javascript">
+     gantt.attachEvent("onAfterTaskUpdate", function(id,item){
+    var updated = gantt.copy(item);
+  
+    var dateToStr = gantt.date.date_to_str(gantt.config.xml_date);
+    updated.start_date = dateToStr(updated.start_date);
+    updated.end_date = dateToStr(updated.end_date);
+    
+  // remove service properties
+  for(var i in updated){
+    if((i+"").indexOf("$") == 0){
+      delete updated[i];
+    }
+  } 
+    alert(JSON.stringify(updated));
+});
+     var textEditor = {type: "text", map_to: "text"};
+     gantt.config.lightbox.sections=[
+    {name:"description", height:72, map_to:"tex", type:"textarea", focus:true},
+    {name:"time",        height:25, map_to:"auto", type:"duration"},
+    {name:"resources",   height:72, map_to:"resources", type:"textarea"}
+];
+gantt.locale.labels.section_resources = "Resources";
+gantt.templates.tooltip_text = function(start,end,task){
+    return "<b>Task:</b> "+task.text+"<br/><b>Duration:</b> " + task.duration;
+};
+     gantt.config.columns = [
+    {name:"text",       label:"Task name",  width:"*", tree:true },
+    {name:"start_date", label:"Start time", align:"center" },
+    {name:"duration",   label:"Duration",   align:"center" },
+    {name:"resources",  label:"Resources",  align:"center" , resize: true, editor: textEditor },
+    {name:"add",        label:"",           width:44 }
+];
+     gantt.init("gantt_here");
+     gantt.load("tasks.json");
+     
+    </script>
+</body>
+</html>
